@@ -1,6 +1,6 @@
 {
   "name": "spacetime-etl-emigrant-city",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Emigrant City",
   "main": "emigrant-city.js",
   "devDependencies": {

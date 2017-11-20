@@ -2,7 +2,128 @@
   "id": "emigrant-city",
   "title": "Emigrant City",
   "license": "CC0",
-  "description": "Emigrant City",
-  "author": "Bert Spaan",
-  "website": "http://emigrantcity.nypl.org"
+  "description": "Crowdsourced transcription of documents from the Emigrant Bank",
+  "homepage": "http://emigrantcity.nypl.org",
+  "sources": [
+    {
+      "title": "Compressed archive of all transcribed documents",
+      "path": "http://emigrantcity.nypl.org/data/latest"
+    }
+  ],
+  "contributors": [
+    {
+      "title": "Bert Spaan",
+      "role": "editor"
+    },
+    {
+      "title": "NYPL",
+      "role": "author"
+    }
+  ],
+  "fields": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "images",
+      "uuids"
+    ],
+    "properties": {
+      "images": {
+        "type": "object",
+        "required": [
+          "standard",
+          "thumbnail"
+        ],
+        "properties": {
+          "standard": {
+            "type": "string",
+            "description": "URL of scanned document"
+          },
+          "thumbnail": {
+            "type": "string",
+            "description": "URL of thumbnail of scanned document"
+          }
+        }
+      },
+      "uuids": {
+        "type": "object",
+        "required": [
+          "capture",
+          "page",
+          "book"
+        ],
+        "properties": {
+          "capture": {
+            "type": "string",
+            "description": "UUID of capture"
+          },
+          "page": {
+            "type": "string",
+            "description": "UUID of page"
+          },
+          "book": {
+            "type": "string",
+            "description": "UUID of book"
+          }
+        }
+      },
+      "mortgager": {
+        "type": "string",
+        "description": "Name of mortgager"
+      },
+      "address": {
+        "type": "string",
+        "description": "Address of building"
+      },
+      "date": {
+        "type": "string",
+        "description": "Date when mortgage was issued"
+      },
+      "dimensions": {
+        "type": "object",
+        "properties": {
+          "land": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Dimensions of lot, in feet"
+          },
+          "building": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Dimensions of building, in feet"
+          }
+        }
+      },
+      "amountLoaned": {
+        "type": "integer",
+        "description": "Amount loaned, in US dollar"
+      },
+      "properties": {
+        "type": "object",
+        "properties": {
+          "stories": {
+            "type": "integer",
+            "description": "Amount of stories"
+          },
+          "material": {
+            "type": "string",
+            "description": "Material of building"
+          }
+        }
+      },
+      "recordNumber": {
+        "type": "integer",
+        "description": "Record number"
+      },
+      "additionalInfo": {
+        "type": "string",
+        "description": "Optional additional info"
+      }
+    }
+  }
 }

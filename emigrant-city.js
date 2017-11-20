@@ -22,7 +22,7 @@ const FIELDS = {
   'Mortgager': 'mortgager',
   'Street Address': 'address',
   'Record Date': 'date',
-  'Amount Loaned': 'amountLoanded',
+  'Amount Loaned': 'amountLoaned',
   'Valuation': 'valuation',
   'Record Number': 'recordNumber',
   'Land & Building Dimensions': 'dimensions',
@@ -37,7 +37,7 @@ const FIELD_TRANSFORMATIONS = {
     building: value.em_survey_building_dimensions
   }),
   properties: (value) => ({
-    stories: value.em_record_stories,
+    stories: value.em_record_stories ? value.em_record_stories : undefined,
     material: value.em_record_material
   })
 }
