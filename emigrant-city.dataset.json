@@ -20,6 +20,10 @@
       "role": "author"
     }
   ],
+  "dependsOn": [
+    "nyc-streets.transform",
+    "addresses.transform"
+  ],
   "fields": {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
@@ -123,6 +127,10 @@
       "additionalInfo": {
         "type": "string",
         "description": "Optional additional info"
+      },
+      "addressId": {
+        "type": "string",
+        "description": "ID of geocoded address"
       }
     }
   }

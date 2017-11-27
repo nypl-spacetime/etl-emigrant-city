@@ -1,6 +1,6 @@
 {
   "name": "spacetime-etl-emigrant-city",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Emigrant City",
   "main": "emigrant-city.js",
   "devDependencies": {
@@ -18,6 +18,7 @@
   "author": "Bert Spaan",
   "license": "MIT",
   "dependencies": {
+    "@spacetime/nyc-historical-geocoder": "github:nypl-spacetime/nyc-historical-geocoder",
     "got": "^6.7.1",
     "gunzip-maybe": "^1.4.1",
     "highland": "^2.10.5",

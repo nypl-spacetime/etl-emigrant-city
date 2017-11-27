@@ -4,6 +4,7 @@ const got = require('got')
 const H = require('highland')
 const gunzip = require('gunzip-maybe')
 const tar = require('tar-stream')
+const Geocoder = require('@spacetime/nyc-historical-geocoder')
 
 const LATEST_DATA_URL = 'http://emigrantcity.nypl.org/data/latest'
 
@@ -117,14 +118,71 @@ function download (config, dirs, tools, callback) {
   extract.on('finish', callback)
 }
 
+function geocode (config, dirs, tools, callback) {
+  // Initialize geocoder
+  const geocoderConfig = {
+    datasetDir: dirs.getDir(null, 'transform')
+  }
+
+  Geocoder(geocoderConfig)
+    .then((geocoder) => {
+      let count = 1
+
+      H(fs.createReadStream(path.join(dirs.previous, 'records.ndjson')))
+        .split()
+        .compact()
+        .map(JSON.parse)
+        .filter((record) => record.export_document)
+        .map((record) => {
+          if (count % 1000 === 0) {
+            console.log(`    Geocoded ${count} lines`)
+          }
+
+          count += 1
+
+          const fields = getFields(record.export_document.export_fields)
+
+          // Geocode fields.address
+          let geocoded
+          if (fields.address) {
+            try {
+              const result = geocoder(fields.address)
+              geocoded = {
+                found: true,
+                result
+              }
+            } catch (err) {
+              geocoded = {
+                found: false,
+                error: err.message
+              }
+            }
+          }
+
+          return {
+            ...record,
+            fields,
+            geocoded
+          }
+        })
+        .map(JSON.stringify)
+        .intersperse('\n')
+        .pipe(fs.createWriteStream(path.join(dirs.current, 'records.ndjson')))
+        .on('finish', callback)
+    })
+    .catch(callback)
+}
+
 function transform (config, dirs, tools, callback) {
-  H(fs.createReadStream(path.join(dirs.download, 'records.ndjson')))
+  H(fs.createReadStream(path.join(dirs.previous, 'records.ndjson')))
     .split()
     .compact()
     .map(JSON.parse)
     .filter((record) => record.export_document)
     .map((record) => {
+      const id = record.id
       const images = record.subjects && record.subjects[0] && record.subjects[0].location
+      const fields = record.fields
 
       const uuids = {
         capture: record.meta_data.capture_uuid,
@@ -132,31 +190,61 @@ function transform (config, dirs, tools, callback) {
         book: record.meta_data.book_uri
       }
 
-      const fields = getFields(record.export_document.export_fields)
+      let geometry
+      let relation
+      let log
+      let addressId
+      if (record.geocoded && record.geocoded.found) {
+        addressId = record.geocoded.result.properties.address.id
+        geometry = record.geocoded.result.geometry
 
-      const object = {
-        id: record.id,
-        type: 'st:Document',
-        name: [
-          fields.mortgager,
-          fields.address
-        ].join(' - '),
-        validSince: fields.date,
-        validUntil: fields.date,
-        data: {
-          images,
-          uuids,
-          ...fields
+        relation = {
+          type: 'relation',
+          obj: {
+            from: id,
+            to: addressId,
+            type: 'st:in'
+          }
+        }
+      } else if (record.geocoded && record.geocoded.error) {
+        log = {
+          type: 'log',
+          obj: {
+            id,
+            error: record.geocoded.error
+          }
         }
       }
 
-      return {
+      const object = {
         type: 'object',
-        obj: object
+        obj: {
+          id,
+          type: 'st:Document',
+          name: [
+            fields.mortgager,
+            fields.address
+          ].join(' - '),
+          validSince: fields.date,
+          validUntil: fields.date,
+          data: {
+            images,
+            uuids,
+            ...fields,
+            addressId
+          },
+          geometry
+        }
       }
+
+      return [
+        object,
+        relation,
+        log
+      ]
     })
-    .compact()
     .flatten()
+    .compact()
     .map(H.curry(tools.writer.writeObject))
     .nfcall([])
     .series()
@@ -168,5 +256,6 @@ function transform (config, dirs, tools, callback) {
 
 module.exports.steps = [
   download,
+  geocode,
   transform
 ]
