@@ -13,10 +13,10 @@
   "contributors": [
     {
       "title": "Bert Spaan",
-      "role": "editor"
+      "role": "wrangler"
     },
     {
-      "title": "NYPL",
+      "title": "Emigrant City contributors",
       "role": "author"
     }
   ],
@@ -24,7 +24,7 @@
     "nyc-streets.transform",
     "addresses.transform"
   ],
-  "fields": {
+  "schema": {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "additionalProperties": false,
