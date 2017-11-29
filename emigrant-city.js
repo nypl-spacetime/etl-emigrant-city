@@ -135,7 +135,7 @@ function geocode (config, dirs, tools, callback) {
         .filter((record) => record.export_document)
         .map((record) => {
           if (count % 1000 === 0) {
-            console.log(`    Geocoded ${count} lines`)
+            console.log(`    Geocoded ${count} records`)
           }
 
           count += 1
