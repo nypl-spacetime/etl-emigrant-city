@@ -24,6 +24,24 @@
     "nyc-streets.transform",
     "addresses.transform"
   ],
+  "flattenPaths": [
+    "$.data.images.standard",
+    "$.data.images.thumbnail",
+    "$.data.uuids.capture",
+    "$.data.uuids.page",
+    "$.data.uuids.book",
+    "$.data.mortgager",
+    "$.data.address",
+    "$.data.date",
+    "$.data.dimensions.land",
+    "$.data.dimensions.building",
+    "$.data.amountLoaned",
+    "$.data.properties.stories",
+    "$.data.properties.material",
+    "$.data.recordNumber",
+    "$.data.additionalInfo",
+    "$.data.addressId"
+  ],
   "schema": {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
